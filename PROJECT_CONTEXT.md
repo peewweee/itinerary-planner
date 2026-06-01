@@ -7,7 +7,7 @@
 **Build target:** Functional demo completed in 1 day (~8 focused hours)
 **Context:** Capstone / thesis demo project
 
-> ⚠️ **Tech stack is partly finalized.** Frontend framework (**Next.js**) and deployment (**Vercel**) are decided. The **AI provider and backend/database may still change** mid-build. We are building **frontend-first** with mocked data behind a thin, swappable data layer so the UI never depends on any specific backend or AI provider.
+> ⚠️ **Tech stack decisions.** Frontend framework (**Next.js**) and deployment (**Vercel**) are decided. **No database/backend will be used** — the deliverable is a **demo video** on a single screen, so all data is mocked in-browser behind a swappable data layer. (A real backend could be added later, but it's intentionally out of scope.) The **AI provider for itinerary generation may still change**, which is why generation also sits behind the data layer.
 
 ---
 
@@ -81,10 +81,10 @@ This works even with zero users (the time guess always returns a value), gets sm
 | Styling | 🔒 Firm | **Tailwind CSS** | Fast UI, no design overhead |
 | Map | 🔒 Firm | **Leaflet + OpenStreetMap** | Free, no billing, no API key |
 | Deployment | 🔒 Firm | **Vercel** | Decided. One-click deploy, free tier, native Next.js support |
-| Data source (now) | 🔒 Firm | **Mocked data + thin swappable data layer** | UI talks to a `dataService` interface; real backend slots in later with no UI changes |
-| AI provider | ❓ Open | Claude API (`claude-sonnet-4-6`) *tentative* | May change — itinerary generation sits behind the data layer |
-| Backend / DB / Realtime | ❓ Open | Supabase *tentative* | May change — could be Next.js API routes + another DB, Firebase, etc. |
-| Weather | ❓ Open | OpenWeather *tentative* | Free tier; powers the weather modifier when wired up |
+| Data source | 🔒 Firm | **Mocked data, in-browser, behind a swappable `dataService`** | Deliverable is a demo video on one screen — no shared/persistent data needed |
+| Backend / DB / Realtime | 🔒 Firm | **None (intentionally out of scope)** | A database would only add cross-device shared reports, which a single-screen video never shows. Skipped. |
+| AI provider | 🔒 Firm | **Google Gemini (`gemini-2.5-flash`, free tier)** | Wired via a server-side `/api/itinerary` route; key in `.env.local`. Sits behind the data layer with automatic fallback to the offline mock generator on any error. |
+| Weather | ❓ Open | OpenWeather *tentative* | Optional — currently mocked to sunny; can wire the free API if we want live weather in the video |
 
 **Decisions made:**
 - ✅ **Next.js + Vercel** — frontend framework and deployment locked in.
@@ -238,11 +238,13 @@ Curated data guarantees the demo never breaks on a bad API response, and lets us
 | A8 | Dynamic Rerouting Engine UI: detect → suggest banner → "Swap" updates plan |
 | A9 | Polish, empty/loading states, responsive layout |
 
-**Phase B — Wire up backend (after stack is finalized):**
-- Replace mock `dataService` with real backend (DB + realtime)
-- Connect chosen AI provider for itinerary generation
-- Connect weather API for the modifier
-- Deploy to chosen host
+**Phase B — Remaining for the demo video (no backend):**
+- (Optional) Connect real Claude AI for itinerary generation — still behind `dataService`
+- (Optional) Connect real OpenWeather for live weather modifier
+- Final polish pass for the on-camera demo
+- (Optional) Deploy to Vercel so the video shows a live URL
+
+> **Decision (2026-06-01):** Database/backend skipped. Deliverable is a demo video on a single screen, so in-browser mock data is sufficient. Crowdsourced reporting is demonstrated as live in-session updates rather than cross-device sync.
 
 ---
 
