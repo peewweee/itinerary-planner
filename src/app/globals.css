@@ -1,0 +1,31 @@
+@import "tailwindcss";
+
+:root {
+  --background: #f8fafc;
+  --foreground: #0f172a;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+html,
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+}
+
+/* Reset Leaflet's default white box around our custom divIcon pins. */
+.crowdflow-pin {
+  background: transparent;
+  border: none;
+}
+
+/* Keep the Leaflet map controls above Tailwind stacking contexts. */
+.leaflet-container {
+  font: inherit;
+}

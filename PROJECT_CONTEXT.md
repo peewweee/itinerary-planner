@@ -7,7 +7,7 @@
 **Build target:** Functional demo completed in 1 day (~8 focused hours)
 **Context:** Capstone / thesis demo project
 
-> ⚠️ **Tech stack is NOT finalized.** The AI provider, backend, and deployment target may all change mid-build. We are building **frontend-first** with mocked data behind a thin, swappable data layer so the UI never depends on any specific backend. Treat all stack entries below as the *current working assumption*, not a commitment.
+> ⚠️ **Tech stack is partly finalized.** Frontend framework (**Next.js**) and deployment (**Vercel**) are decided. The **AI provider and backend/database may still change** mid-build. We are building **frontend-first** with mocked data behind a thin, swappable data layer so the UI never depends on any specific backend or AI provider.
 
 ---
 
@@ -71,22 +71,23 @@ This works even with zero users (the time guess always returns a value), gets sm
 
 ---
 
-## 5. Tech Stack (PROVISIONAL — not finalized)
+## 5. Tech Stack
 
-> The AI provider, backend, and deployment may change. Only the **frontend** choices are firm enough to start building against. Everything else is a working assumption.
+> Frontend framework and deployment are decided. AI provider and backend/database may still change — both sit behind a swappable data layer.
 
-| Layer | Status | Current assumption | Why / notes |
-|-------|--------|--------------------|-------------|
-| Frontend framework | 🔒 Firm (to start) | **Vite + React + TypeScript** | Pure frontend, decoupled from backend/deploy — exactly what we want while the stack is open. (Switched away from Next.js, which bundles backend + deploy assumptions.) |
+| Layer | Status | Choice | Why / notes |
+|-------|--------|--------|-------------|
+| Frontend framework | 🔒 Firm | **Next.js (App Router) + TypeScript** | Decided. Pairs natively with Vercel; API routes available later for the backend. |
 | Styling | 🔒 Firm | **Tailwind CSS** | Fast UI, no design overhead |
 | Map | 🔒 Firm | **Leaflet + OpenStreetMap** | Free, no billing, no API key |
-| Data source (now) | 🔒 Firm | **Mocked data + thin swappable data layer** | Frontend talks to a `dataService` interface; real backend slots in later with no UI changes |
-| AI provider | ❓ Open | Claude API (`claude-sonnet-4-6`) *tentative* | May change — itinerary generation is behind the data layer |
-| Backend / DB / Realtime | ❓ Open | Supabase *tentative* | May change — could be Firebase, custom API, etc. |
+| Deployment | 🔒 Firm | **Vercel** | Decided. One-click deploy, free tier, native Next.js support |
+| Data source (now) | 🔒 Firm | **Mocked data + thin swappable data layer** | UI talks to a `dataService` interface; real backend slots in later with no UI changes |
+| AI provider | ❓ Open | Claude API (`claude-sonnet-4-6`) *tentative* | May change — itinerary generation sits behind the data layer |
+| Backend / DB / Realtime | ❓ Open | Supabase *tentative* | May change — could be Next.js API routes + another DB, Firebase, etc. |
 | Weather | ❓ Open | OpenWeather *tentative* | Free tier; powers the weather modifier when wired up |
-| Deployment | ❓ Open | TBD (Vercel / Netlify / other) | Decide near the end |
 
 **Decisions made:**
+- ✅ **Next.js + Vercel** — frontend framework and deployment locked in.
 - ✅ **Frontend-first build** — UI + mocked data now; backend wired in later.
 - ✅ **Swappable data layer** — all data access goes through one interface so the backend/AI can change without touching the UI.
 - ✅ Skip Google Places API — spots are pre-loaded.
@@ -227,7 +228,7 @@ Curated data guarantees the demo never breaks on a bad API response, and lets us
 **Phase A — Frontend with mocked data (current focus):**
 | Step | Task |
 |------|------|
-| A1 | Scaffold Vite + React + TS + Tailwind; project structure |
+| A1 | Scaffold Next.js + TS + Tailwind; project structure |
 | A2 | Mock spot data (~35 PH spots) + `dataService` interface (swappable) |
 | A3 | Interest + time + city input form |
 | A4 | Itinerary cards view |
