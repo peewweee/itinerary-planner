@@ -11,7 +11,11 @@
       "PowerShell($conns = Get-NetTCPConnection -LocalPort 3000 -State Listen -ErrorAction SilentlyContinue; if \\($conns\\) { $conns.OwningProcess | Select-Object -Unique | ForEach-Object { try { Stop-Process -Id $_ -Force -ErrorAction Stop; \"Stopped PID $_\" } catch {} } } else { \"No listener on 3000\" })",
       "PowerShell($ok=$false; for \\($i=0; $i -lt 30; $i++\\) { try { $r = Invoke-WebRequest -Uri \"http://localhost:3000\" -UseBasicParsing -TimeoutSec 4; if \\($r.StatusCode -eq 200\\) { $ok=$true; break } } catch { Start-Sleep -Milliseconds 1500 } }; if \\($ok\\) { \"Server ready\" } else { \"Not ready\" })",
       "PowerShell($body = @{ city=\"Manila\"; interests=@\\(\"history\",\"food\"\\); startHour=9; endHour=17; stops=4 } | ConvertTo-Json; try { $r = Invoke-WebRequest -Uri \"http://localhost:3000/api/itinerary\" -Method POST -ContentType \"application/json\" -Body $body -UseBasicParsing -TimeoutSec 30; \"Status: $\\($r.StatusCode\\)\"; \"Body: $\\($r.Content\\)\" } catch { \"ERROR: $\\($_.Exception.Message\\)\" })",
-      "PowerShell($conns = Get-NetTCPConnection -LocalPort 3000 -State Listen -ErrorAction SilentlyContinue; if \\($conns\\) { $conns.OwningProcess | Select-Object -Unique | ForEach-Object { try { Stop-Process -Id $_ -Force -ErrorAction Stop } catch {} } }; \"stopped\")"
+      "PowerShell($conns = Get-NetTCPConnection -LocalPort 3000 -State Listen -ErrorAction SilentlyContinue; if \\($conns\\) { $conns.OwningProcess | Select-Object -Unique | ForEach-Object { try { Stop-Process -Id $_ -Force -ErrorAction Stop } catch {} } }; \"stopped\")",
+      "PowerShell($c = Get-NetTCPConnection -LocalPort 3000 -State Listen -ErrorAction SilentlyContinue; if \\($c\\) { $c.OwningProcess | Select-Object -Unique | ForEach-Object { Stop-Process -Id $_ -Force; \"Stopped PID $_\" } } else { \"Nothing on 3000\" })",
+      "PowerShell(foreach \\($city in \"Manila\",\"Cebu\",\"Baguio\",\"Boracay\"\\) { $r = Invoke-WebRequest -Uri \"http://localhost:3000/api/weather?city=$city\" -UseBasicParsing; \"$city => $\\($r.Content\\)\" })",
+      "PowerShell(npx tsc --noEmit)",
+      "PowerShell($r = Invoke-WebRequest -Uri \"http://localhost:3000/\" -UseBasicParsing; \"Status: $\\($r.StatusCode\\)\")"
     ]
   }
 }

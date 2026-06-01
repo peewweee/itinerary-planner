@@ -15,6 +15,7 @@ import { findAlternative, RerouteSuggestion } from "@/lib/reroute";
 import { ItineraryForm } from "@/components/ItineraryForm";
 import { SpotCard } from "@/components/SpotCard";
 import { WeatherBar } from "@/components/WeatherBar";
+import { SplashScreen } from "@/components/SplashScreen";
 import type { MapMarker } from "@/components/MapView";
 
 // Leaflet can't render on the server — load the map client-side only.
@@ -29,6 +30,7 @@ const MapView = dynamic(() => import("@/components/MapView"), {
 
 export default function Home() {
   const [mounted, setMounted] = useState(false);
+  const [showSplash, setShowSplash] = useState(true);
   const [dayIndex, setDayIndex] = useState(1); // Mon fallback for SSR
   const [cities, setCities] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
@@ -145,97 +147,125 @@ export default function Home() {
 
   const crowdedCount = rows.filter((r) => r?.crowd.band === "high").length;
 
+  const splash = showSplash ? (
+    <SplashScreen onDone={() => setShowSplash(false)} />
+  ) : null;
+
   if (!mounted) {
     return (
-      <main className="flex min-h-screen items-center justify-center text-slate-400">
-        Loading CrowdFlow…
-      </main>
+      <>
+        {splash}
+        <main className="flex h-screen items-center justify-center text-slate-400">
+          Loading CrowdFlow…
+        </main>
+      </>
     );
   }
 
   return (
-    <main className="min-h-screen bg-slate-50">
-      <header className="border-b border-slate-200 bg-white">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
-          <div className="flex items-center gap-2">
-            <span className="text-2xl">🧭</span>
-            <div>
-              <h1 className="text-xl font-bold text-slate-900">CrowdFlow</h1>
-              <p className="text-xs text-slate-500">
-                Dynamic, crowd-aware itineraries for the Philippines
-              </p>
-            </div>
-          </div>
-          {itinerary && (
-            <button
-              onClick={() => setItinerary(null)}
-              className="rounded-lg border border-slate-300 px-3 py-1.5 text-sm font-medium text-slate-600 hover:bg-slate-50"
-            >
-              Plan another day
-            </button>
-          )}
-        </div>
-      </header>
-
-      <div className="mx-auto max-w-6xl px-4 py-6">
-        {!itinerary ? (
-          <div className="mx-auto max-w-xl">
-            <h2 className="mb-1 text-2xl font-bold text-slate-900">
-              Plan a queue-free day
-            </h2>
-            <p className="mb-6 text-slate-500">
-              Tell us what you like and we&apos;ll build a route that steers you
-              around the crowds.
-            </p>
-            <ItineraryForm
-              cities={cities}
-              loading={loading}
-              onGenerate={handleGenerate}
-            />
-          </div>
-        ) : (
-          <div className="grid gap-6 lg:grid-cols-[1fr_minmax(360px,42%)]">
-            {/* Itinerary column */}
-            <div className="space-y-4">
-              {weather && <WeatherBar weather={weather} />}
-
-              {crowdedCount > 0 && (
-                <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-                  ⚠️ {crowdedCount} stop{crowdedCount > 1 ? "s" : ""} on your
-                  route {crowdedCount > 1 ? "are" : "is"} packed. See the
-                  suggested swaps below.
-                </div>
-              )}
-
-              {rows.map((r) =>
-                r ? (
-                  <SpotCard
-                    key={r.stop.spotId}
-                    spot={r.spot}
-                    stop={r.stop}
-                    index={markers.findIndex((m) => m.spot.id === r.spot.id)}
-                    crowd={r.crowd}
-                    suggestion={r.suggestion}
-                    suggestionCrowd={r.suggestionCrowd}
-                    onReport={handleReport}
-                    onSwap={handleSwap}
-                  />
-                ) : null
-              )}
-            </div>
-
-            {/* Map column */}
-            <div className="lg:sticky lg:top-6 lg:self-start">
-              <div className="h-[70vh] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-                <MapView markers={markers} />
-              </div>
-              <p className="mt-2 text-center text-xs text-slate-400">
-                Tap a pin for crowd details · 🟢 quiet 🟡 filling up 🔴 packed
-              </p>
-            </div>
-          </div>
-        )}
+    <>
+      {splash}
+      <main className="relative h-screen w-screen overflow-hidden">
+      {/* Full-screen map living behind everything else. */}
+      <div className="absolute inset-0 z-0">
+        <MapView markers={markers} />
       </div>
-    </main>
+
+      {/* Circular back button, top-left, only once a plan exists. */}
+      {itinerary && (
+        <button
+          onClick={() => setItinerary(null)}
+          aria-label="Plan another day"
+          className="absolute left-4 top-4 z-30 flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 shadow-lg transition hover:bg-slate-50 active:scale-95"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="h-5 w-5"
+          >
+            <path d="M15 18l-6-6 6-6" />
+          </svg>
+        </button>
+      )}
+
+      {/* Slide-up bottom sheet that holds the form / itinerary. */}
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20 flex justify-center">
+        <div className="animate-sheet-up pointer-events-auto flex max-h-[82vh] w-full max-w-2xl flex-col rounded-t-3xl bg-white shadow-2xl ring-1 ring-black/5">
+          {/* Drag handle */}
+          <div className="flex shrink-0 justify-center pb-1 pt-3">
+            <div className="h-1.5 w-10 rounded-full bg-slate-300" />
+          </div>
+
+          <div className="overflow-y-auto px-5 pb-7">
+            {!itinerary ? (
+              <>
+                <div className="flex items-center gap-2 pb-4 pt-1">
+                  <span className="text-2xl">🧭</span>
+                  <div>
+                    <h1 className="text-lg font-bold text-slate-900">
+                      CrowdFlow
+                    </h1>
+                    <p className="text-xs text-slate-500">
+                      Dynamic, crowd-aware itineraries for the Philippines
+                    </p>
+                  </div>
+                </div>
+                <h2 className="mb-1 text-xl font-bold text-slate-900">
+                  Plan a queue-free day
+                </h2>
+                <p className="mb-5 text-sm text-slate-500">
+                  Tell us what you like and we&apos;ll build a route that steers
+                  you around the crowds.
+                </p>
+                <ItineraryForm
+                  cities={cities}
+                  loading={loading}
+                  onGenerate={handleGenerate}
+                />
+              </>
+            ) : (
+              <div className="space-y-4">
+                {weather && <WeatherBar weather={weather} />}
+
+                {crowdedCount > 0 && (
+                  <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+                    ⚠️ {crowdedCount} stop{crowdedCount > 1 ? "s" : ""} on your
+                    route {crowdedCount > 1 ? "are" : "is"} packed. See the
+                    suggested swaps below.
+                  </div>
+                )}
+
+                {rows.map((r) =>
+                  r ? (
+                    <SpotCard
+                      key={r.stop.spotId}
+                      spot={r.spot}
+                      stop={r.stop}
+                      index={markers.findIndex((m) => m.spot.id === r.spot.id)}
+                      crowd={r.crowd}
+                      suggestion={r.suggestion}
+                      suggestionCrowd={r.suggestionCrowd}
+                      onReport={handleReport}
+                      onSwap={handleSwap}
+                    />
+                  ) : null
+                )}
+
+                <p className="pt-1 text-center text-xs text-slate-400">
+                  Tap a pin on the map for crowd details · 🟢 quiet 🟡 filling
+                  up 🔴 packed
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+      </main>
+    </>
   );
 }
