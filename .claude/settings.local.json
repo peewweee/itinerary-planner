@@ -16,7 +16,9 @@
       "PowerShell(foreach \\($city in \"Manila\",\"Cebu\",\"Baguio\",\"Boracay\"\\) { $r = Invoke-WebRequest -Uri \"http://localhost:3000/api/weather?city=$city\" -UseBasicParsing; \"$city => $\\($r.Content\\)\" })",
       "PowerShell(npx tsc --noEmit)",
       "PowerShell($r = Invoke-WebRequest -Uri \"http://localhost:3000/\" -UseBasicParsing; \"Status: $\\($r.StatusCode\\)\")",
-      "PowerShell(npx tsc --noEmit; if \\($?\\) { $r = Invoke-WebRequest -Uri \"http://localhost:3000/\" -UseBasicParsing; \"Status: $\\($r.StatusCode\\)\" })"
+      "PowerShell(npx tsc --noEmit; if \\($?\\) { $r = Invoke-WebRequest -Uri \"http://localhost:3000/\" -UseBasicParsing; \"Status: $\\($r.StatusCode\\)\" })",
+      "PowerShell(git remote -v; \"---BRANCH---\"; git branch --show-current; \"---STATUS---\"; git status --short)",
+      "PowerShell(git *)"
     ]
   }
 }
