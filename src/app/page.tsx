@@ -31,6 +31,7 @@ const MapView = dynamic(() => import("@/components/MapView"), {
 export default function Home() {
   const [mounted, setMounted] = useState(false);
   const [showSplash, setShowSplash] = useState(true);
+  const [sheetMinimized, setSheetMinimized] = useState(false);
   const [dayIndex, setDayIndex] = useState(1); // Mon fallback for SSR
   const [cities, setCities] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
@@ -61,6 +62,7 @@ export default function Home() {
         setCitySpots(spots);
         setSpotMap(new Map(spots.map((s) => [s.id, s])));
         setReports([]);
+        setSheetMinimized(false); // pop the sheet open for the new plan
       } finally {
         setLoading(false);
       }
@@ -147,6 +149,12 @@ export default function Home() {
 
   const crowdedCount = rows.filter((r) => r?.crowd.band === "high").length;
 
+  const collapsedLabel = itinerary
+    ? `${itinerary.city} · ${markers.length} stop${
+        markers.length === 1 ? "" : "s"
+      }`
+    : "Plan a queue-free day";
+
   const splash = showSplash ? (
     <SplashScreen onDone={() => setShowSplash(false)} />
   ) : null;
@@ -195,13 +203,41 @@ export default function Home() {
 
       {/* Slide-up bottom sheet that holds the form / itinerary. */}
       <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20 flex justify-center">
-        <div className="animate-sheet-up pointer-events-auto flex max-h-[82vh] w-full max-w-2xl flex-col rounded-t-3xl bg-white shadow-2xl ring-1 ring-black/5">
-          {/* Drag handle */}
-          <div className="flex shrink-0 justify-center pb-1 pt-3">
+        <div className="animate-sheet-up pointer-events-auto flex max-h-[85vh] w-full max-w-2xl flex-col rounded-t-3xl bg-white shadow-2xl ring-1 ring-black/5">
+          {/* Drag handle — tap to minimize / expand */}
+          <button
+            onClick={() => setSheetMinimized((m) => !m)}
+            aria-label={sheetMinimized ? "Expand panel" : "Minimize panel"}
+            aria-expanded={!sheetMinimized}
+            className="flex w-full shrink-0 flex-col items-center gap-1.5 px-5 pb-2 pt-3 transition hover:bg-slate-50/60"
+          >
             <div className="h-1.5 w-10 rounded-full bg-slate-300" />
-          </div>
+            {sheetMinimized && (
+              <span className="flex items-center gap-1.5 pt-0.5 text-sm font-semibold text-slate-700">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="h-4 w-4 text-slate-400"
+                >
+                  <path d="M18 15l-6-6-6 6" />
+                </svg>
+                {collapsedLabel}
+              </span>
+            )}
+          </button>
 
-          <div className="overflow-y-auto px-5 pb-7">
+          <div
+            className={`overflow-y-auto px-5 transition-all duration-300 ease-out ${
+              sheetMinimized
+                ? "max-h-0 pb-0 opacity-0"
+                : "max-h-[76vh] pb-7 opacity-100"
+            }`}
+          >
             {!itinerary ? (
               <>
                 <div className="flex items-center gap-2 pb-4 pt-1">

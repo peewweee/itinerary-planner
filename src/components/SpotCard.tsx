@@ -56,7 +56,7 @@ export function SpotCard({
                 {cat?.emoji} {spot.name}
               </h3>
             </div>
-            <CrowdBadge crowd={crowd} />
+            <CrowdBadge crowd={crowd} showInfo />
           </div>
 
           <p className="mt-1 text-sm text-slate-500">{spot.description}</p>
