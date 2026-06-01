@@ -6,6 +6,7 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { CrowdResult, Spot } from "@/types";
 import { BAND_META } from "@/lib/ui";
+import { CrowdScoreInfo } from "./CrowdBadge";
 
 export interface MapMarker {
   spot: Spot;
@@ -79,7 +80,10 @@ export default function MapView({ markers }: { markers: MapMarker[] }) {
                 {m.order}. {m.spot.name}
               </strong>
               <br />
-              {BAND_META[m.crowd.band].label} · {m.crowd.score}/100
+              <span className="inline-flex items-center gap-1.5">
+                {BAND_META[m.crowd.band].label} · {m.crowd.score}/100
+                <CrowdScoreInfo />
+              </span>
             </div>
           </Popup>
         </Marker>

@@ -27,7 +27,7 @@ export function CrowdBadge({
 
 // Small "i" affordance that reveals a tooltip explaining the crowd score.
 // Pure CSS (hover + focus), so it works inside server components.
-function CrowdScoreInfo() {
+export function CrowdScoreInfo() {
   return (
     <span className="group/info relative inline-flex">
       <span
@@ -40,19 +40,14 @@ function CrowdScoreInfo() {
       </span>
       <span
         role="tooltip"
-        className="pointer-events-none absolute right-0 top-6 z-20 w-60 rounded-lg bg-slate-900 p-3 text-left text-[11px] font-normal leading-relaxed text-slate-100 opacity-0 shadow-xl transition-opacity duration-150 group-hover/info:opacity-100 group-focus-within/info:opacity-100"
+        className="pointer-events-none absolute right-0 top-6 z-30 w-44 rounded-lg bg-slate-900/65 p-2.5 text-left text-[10px] font-normal leading-snug text-slate-100 opacity-0 shadow-lg backdrop-blur-sm transition-opacity duration-150 group-hover/info:opacity-100 group-focus-within/info:opacity-100"
       >
-        <span className="mb-1 block text-xs font-semibold text-white">
+        <span className="mb-1 block text-[11px] font-semibold text-white">
           Crowd score · 0–100
         </span>
-        How busy we expect this spot to be at your visit time. Higher = more
-        crowded.
-        <span className="mt-1.5 block">
-          🟢 0–40 quiet · 🟡 41–70 filling up · 🔴 71+ packed
-        </span>
-        <span className="mt-1.5 block text-slate-300">
-          Based on time-of-day patterns, your live reports &amp; the weather.
-        </span>
+        <span className="block">🟢 0–40 quiet</span>
+        <span className="block">🟡 41–70 busy</span>
+        <span className="block">🔴 71+ packed</span>
       </span>
     </span>
   );

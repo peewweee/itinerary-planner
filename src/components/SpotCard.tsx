@@ -37,7 +37,7 @@ export function SpotCard({
   const cat = categoryMeta(spot.category);
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+    <div className="rounded-2xl border border-slate-200 bg-white shadow-sm">
       <div className="flex gap-4 p-5">
         <div className="flex flex-col items-center">
           <div className="flex h-8 w-8 items-center justify-center rounded-full bg-sky-600 text-sm font-bold text-white">
@@ -78,7 +78,7 @@ export function SpotCard({
       </div>
 
       {suggestion && (
-        <div className="border-t border-amber-200 bg-amber-50 px-5 py-4">
+        <div className="rounded-b-2xl border-t border-amber-200 bg-amber-50 px-5 py-4">
           <div className="flex items-start gap-2">
             <span className="text-lg">↪️</span>
             <div className="flex-1">
